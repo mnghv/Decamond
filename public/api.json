@@ -1,0 +1,66 @@
+{
+    "results": [
+        {
+            "gender": "female",
+            "name": {
+                "title": "Ms",
+                "first": "Erica",
+                "last": "Ferguson"
+            },
+            "location": {
+                "street": {
+                    "number": 1791,
+                    "name": "W 6th St"
+                },
+                "city": "Midland",
+                "state": "Colorado",
+                "country": "United States",
+                "postcode": 69316,
+                "coordinates": {
+                    "latitude": "43.5692",
+                    "longitude": "119.4610"
+                },
+                "timezone": {
+                    "offset": "+1:00",
+                    "description": "Brussels, Copenhagen, Madrid, Paris"
+                }
+            },
+            "email": "erica.ferguson@example.com",
+            "login": {
+                "uuid": "43f72d81-a253-4b95-9d69-8bb2e8eeec97",
+                "username": "organiclion728",
+                "password": "hippo",
+                "salt": "jtoRJvKZ",
+                "md5": "b7b285c4f3f99be215d43a13617f6afb",
+                "sha1": "0faba0f7241ba6e20d39f873f0af531ab532051f",
+                "sha256": "09d5803ea7097379036b3cf7dc01c31615ee7d3f343edb84cda1c8856175c2ac"
+            },
+            "dob": {
+                "date": "1984-08-19T15:42:32.278Z",
+                "age": 40
+            },
+            "registered": {
+                "date": "2005-10-03T01:57:17.716Z",
+                "age": 19
+            },
+            "phone": "(689) 975-4964",
+            "cell": "(204) 720-5816",
+            "id": {
+                "name": "SSN",
+                "value": "537-36-1336"
+            },
+            "picture": {
+                "large": "https://randomuser.me/api/portraits/women/89.jpg",
+                "medium": "https://randomuser.me/api/portraits/med/women/89.jpg",
+                "thumbnail": "https://randomuser.me/api/portraits/thumb/women/89.jpg"
+            },
+            "nat": "US"
+        }
+    ],
+    "info": {
+        "seed": "a34dbe358f39dae2",
+        "results": 1,
+        "page": 1,
+        "version": "1.4"
+    }
+}

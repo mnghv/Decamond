@@ -1,0 +1,233 @@
+.authContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(0 0% 100%);
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  .authCard {
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 24rem;
+    animation: slideUp 0.3s ease-out;
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      .title {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: hsl(222.2 84% 4.9%);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        color: hsl(215.4 16.3% 46.9%);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+    }
+
+    .form {
+      .formGroup {
+        margin-bottom: 1.5rem;
+
+        .label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-weight: 500;
+          color: hsl(222.2 84% 4.9%);
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+        }
+
+        .input {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid hsl(214.3 31.8% 91.4%);
+          border-radius: 0.5rem;
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+          transition: all 0.15s ease-in-out;
+          background: hsl(0 0% 100%);
+          color: hsl(222.2 84% 4.9%);
+          box-sizing: border-box;
+
+          &::placeholder {
+            color: hsl(215.4 16.3% 46.9%);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: hsl(222.2 47.4% 11.2%);
+            box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
+          }
+
+          &:hover {
+            border-color: hsl(222.2 47.4% 11.2%);
+          }
+
+          &.error {
+            border-color: hsl(0 84.2% 60.2%);
+            background: hsl(0 84.2% 60.2% / 0.05);
+
+            &:focus {
+              box-shadow: 0 0 0 2px hsl(0 84.2% 60.2% / 0.1);
+            }
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: hsl(214.3 31.8% 91.4%);
+          }
+        }
+
+        .errorMessage {
+          color: hsl(0 84.2% 60.2%);
+          font-size: 0.75rem;
+          margin-top: 0.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          line-height: 1.25rem;
+        }
+      }
+
+              .submitButton {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          background: hsl(222.2 47.4% 11.2%);
+          color: hsl(210 40% 98%);
+          border: 1px solid transparent;
+          border-radius: 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.15s ease-in-out;
+          position: relative;
+          overflow: hidden;
+          line-height: 1.25rem;
+
+          &:hover {
+            background: hsl(222.2 47.4% 9.2%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            background: hsl(214.3 31.8% 91.4%);
+            color: hsl(215.4 16.3% 46.9%);
+          }
+
+          .loadingSpinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+          }
+
+          // Button variants
+          &.destructiveButton {
+            background: hsl(0 84.2% 60.2%);
+            color: hsl(210 40% 98%);
+
+            &:hover {
+              background: hsl(0 84.2% 50.2%);
+            }
+
+            &:focus {
+              box-shadow: 0 0 0 2px hsl(0 84.2% 60.2% / 0.1);
+            }
+          }
+
+          &.outlineButton {
+            background: transparent;
+            color: hsl(222.2 47.4% 11.2%);
+            border: 1px solid hsl(214.3 31.8% 91.4%);
+
+            &:hover {
+              background: hsl(214.3 31.8% 91.4% / 0.5);
+              border-color: hsl(222.2 47.4% 11.2%);
+            }
+
+            &:focus {
+              box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
+            }
+          }
+
+          &.smallButton {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+          }
+
+          &.largeButton {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+          }
+        }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .authContainer {
+    padding: 1rem;
+
+    .authCard {
+      padding: 1.5rem;
+
+      .header {
+        .title {
+          font-size: 1.5rem;
+        }
+
+        .subtitle {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+} 
