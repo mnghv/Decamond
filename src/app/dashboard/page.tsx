@@ -1,90 +1,67 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState, useMemo } from 'react';
 import Button from '../../components/Button';
+import HamburgerMenu from '../../components/HamburgerMenu';
 import styles from '../../styles/Dashboard.module.scss';
-
-interface UserData {
-    name: string;
-    email: string;
-    avatar: string;
-    location: string;
-    phoneNumber: string;
-    loginTime: string;
-}
+import { useAuth, UserData } from '../../utils/authUtils';
+import Image from 'next/image';
 
 const DashboardPage: React.FC = () => {
-    const router = useRouter();
     const [userData, setUserData] = useState<UserData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [sessionDuration, setSessionDuration] = useState<string>('');
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    const { checkAuth, logout, redirectToAuth } = useAuth();
+
+    // Memoize user data to prevent unnecessary re-renders
+    const memoizedUserData = useMemo(() => {
+        return checkAuth();
+    }, [checkAuth]);
 
     useEffect(() => {
-        // Check if user is authenticated
-        const storedUserData = localStorage.getItem('userData');
-
-        if (!storedUserData) {
-            // Redirect to auth page if no user data
-            router.push('/auth');
-            return;
+        if (memoizedUserData) {
+            setUserData(memoizedUserData);
+            setIsLoading(false);
+        } else {
+            // Handle navigation in useEffect instead of during render
+            redirectToAuth();
         }
+    }, [memoizedUserData, redirectToAuth]);
 
-        try {
-            const parsedUserData: UserData = JSON.parse(storedUserData);
-            setUserData(parsedUserData);
-        } catch (error) {
-            console.error('Error parsing user data:', error);
-            localStorage.removeItem('userData');
-            router.push('/auth');
-            return;
-        }
-
-        setIsLoading(false);
-    }, [router]);
-
-    // Calculate session duration
+    // Calculate session duration with optimized timer
     useEffect(() => {
-        if (userData) {
-            const updateSessionDuration = () => {
-                const loginTime = new Date(userData.loginTime).getTime();
-                const now = new Date().getTime();
-                const diff = now - loginTime;
+        if (!userData?.loginTime) return;
 
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor(
-                    (diff % (1000 * 60 * 60)) / (1000 * 60)
-                );
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        const updateSessionDuration = () => {
+            const loginTime = new Date(userData.loginTime).getTime();
+            const now = Date.now();
+            const diff = now - loginTime;
 
-                setSessionDuration(
-                    `${hours.toString().padStart(2, '0')}:${minutes
-                        .toString()
-                        .padStart(2, '0')}:${seconds
-                        .toString()
-                        .padStart(2, '0')}`
-                );
-            };
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            updateSessionDuration();
-            const interval = setInterval(updateSessionDuration, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [userData]);
+            setSessionDuration(
+                `${hours.toString().padStart(2, '0')}:${minutes
+                    .toString()
+                    .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            );
+        };
+
+        // Update immediately
+        updateSessionDuration();
+
+        // Set up interval
+        const interval = setInterval(updateSessionDuration, 1000);
+
+        // Cleanup interval on unmount or userData change
+        return () => {
+            clearInterval(interval);
+        };
+    }, [userData?.loginTime]);
 
     const handleLogout = () => {
-        if (showLogoutConfirm) {
-            localStorage.removeItem('userData');
-            router.push('/auth');
-        } else {
-            setShowLogoutConfirm(true);
-            setTimeout(() => setShowLogoutConfirm(false), 3000);
-        }
-    };
-
-    const cancelLogout = () => {
-        setShowLogoutConfirm(false);
+        logout();
     };
 
     if (isLoading) {
@@ -93,7 +70,7 @@ const DashboardPage: React.FC = () => {
                 <div className={styles.dashboardCard}>
                     <div className={styles.loadingState}>
                         <div className={styles.loadingSpinner}></div>
-                        <p className={styles.loadingText}>در حال بارگذاری...</p>
+                        <p className={styles.loadingText}>Loading...</p>
                     </div>
                 </div>
             </div>
@@ -104,75 +81,104 @@ const DashboardPage: React.FC = () => {
         return null; // Will redirect to auth page
     }
 
+    // Calculate date information
     const loginDate = new Date(userData.loginTime);
-    const isToday = new Date().toDateString() === loginDate.toDateString();
+    const now = new Date();
+    const isToday = now.toDateString() === loginDate.toDateString();
     const isThisWeek =
-        new Date().getTime() - loginDate.getTime() < 7 * 24 * 60 * 60 * 1000;
+        now.getTime() - loginDate.getTime() < 7 * 24 * 60 * 60 * 1000;
 
     return (
         <div className={styles.dashboardContainer}>
-            <div className={styles.dashboardCard}>
-                <div className={styles.header}>
-                    <div className={styles.headerContent}>
-                        <h1 className={styles.title}>داشبورد کاربری</h1>
-                        <p className={styles.subtitle}>
-                            مدیریت حساب کاربری و اطلاعات شخصی
-                        </p>
-                    </div>
-                    <div className={styles.logoutSection}>
-                        {showLogoutConfirm ? (
-                            <div className={styles.logoutConfirm}>
-                                <span className={styles.confirmText}>
-                                    آیا مطمئن هستید؟
-                                </span>
-                                <div className={styles.confirmButtons}>
-                                    <Button
-                                        onClick={handleLogout}
-                                        variant='destructive'
-                                        size='sm'
-                                        className={styles.confirmButton}>
-                                        بله، خروج
-                                    </Button>
-                                    <Button
-                                        onClick={cancelLogout}
-                                        variant='outline'
-                                        size='sm'
-                                        className={styles.cancelButton}>
-                                        انصراف
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <Button
-                                onClick={handleLogout}
-                                variant='outline'
-                                size='sm'
-                                className={styles.logoutButton}>
+            {/* Beautiful Header */}
+            <header className={styles.dashboardHeader}>
+                <div className={styles.headerContent}>
+                    <div className={styles.headerLeft}>
+                        <div className={styles.logoSection}>
+                            <div className={styles.logoIcon}>
                                 <svg
-                                    width='16'
-                                    height='16'
+                                    width='32'
+                                    height='32'
                                     viewBox='0 0 24 24'
                                     fill='none'
                                     xmlns='http://www.w3.org/2000/svg'>
                                     <path
-                                        d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z'
+                                        d='M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z'
                                         fill='currentColor'
                                     />
                                 </svg>
-                                خروج از سیستم
-                            </Button>
-                        )}
+                            </div>
+                            <div className={styles.logoText}>
+                                <h1 className={styles.appTitle}>Decamond</h1>
+                                <span className={styles.appSubtitle}>
+                                    User Dashboard
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.headerCenter}>
+                        <div className={styles.welcomeMessage}>
+                            <span className={styles.welcomeText}>
+                                Welcome back,
+                            </span>
+                            <span className={styles.userName}>
+                                {userData.name}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className={styles.headerRight}>
+                        <div className={styles.userMenu}>
+                            <div className={styles.userAvatar}>
+                                <Image
+                                    src={userData.avatar}
+                                    alt='User avatar'
+                                    width={32}
+                                    height={32}
+                                />
+                            </div>
+
+                            {/* Desktop logout button - hidden in mobile */}
+                            <div className={styles.logoutSection}>
+                                <Button
+                                    onClick={handleLogout}
+                                    variant='outline'
+                                    size='sm'
+                                    className={styles.logoutButton}>
+                                    <svg
+                                        width='16'
+                                        height='16'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        xmlns='http://www.w3.org/2000/svg'>
+                                        <path
+                                            d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z'
+                                            fill='currentColor'
+                                        />
+                                    </svg>
+                                    Logout
+                                </Button>
+                            </div>
+
+                            {/* Mobile hamburger menu */}
+                            <HamburgerMenu onLogout={handleLogout} />
+                        </div>
                     </div>
                 </div>
+            </header>
 
+            <div className={styles.dashboardCard}>
                 <div className={styles.userSection}>
                     <div className={styles.userCard}>
                         <div className={styles.userHeader}>
                             <div className={styles.avatarSection}>
-                                <img
+                                <Image
                                     src={userData.avatar}
-                                    alt='تصویر کاربر'
+                                    alt='User image'
                                     className={styles.userAvatar}
+                                    width={32}
+                                    height={32}
                                 />
                                 <div className={styles.statusIndicator}>
                                     <div className={styles.statusDot}></div>
@@ -187,7 +193,7 @@ const DashboardPage: React.FC = () => {
                                 </p>
                                 <div className={styles.accountStatus}>
                                     <span className={styles.statusBadge}>
-                                        حساب فعال
+                                        Active Account
                                     </span>
                                 </div>
                             </div>
@@ -210,7 +216,7 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <div className={styles.detailContent}>
                                     <span className={styles.detailLabel}>
-                                        موقعیت جغرافیایی
+                                        Location
                                     </span>
                                     <span className={styles.detailValue}>
                                         {userData.location}
@@ -234,7 +240,7 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <div className={styles.detailContent}>
                                     <span className={styles.detailLabel}>
-                                        شماره تماس
+                                        Phone Number
                                     </span>
                                     <span className={styles.detailValue}>
                                         {userData.phoneNumber}
@@ -258,18 +264,18 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <div className={styles.detailContent}>
                                     <span className={styles.detailLabel}>
-                                        زمان ورود
+                                        Login Time
                                     </span>
                                     <span className={styles.detailValue}>
-                                        {loginDate.toLocaleString('fa-IR')}
+                                        {loginDate.toLocaleString('en-US')}
                                         {isToday && (
                                             <span className={styles.todayBadge}>
-                                                امروز
+                                                Today
                                             </span>
                                         )}
                                         {isThisWeek && !isToday && (
                                             <span className={styles.weekBadge}>
-                                                این هفته
+                                                This Week
                                             </span>
                                         )}
                                     </span>
@@ -292,14 +298,14 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <div className={styles.detailContent}>
                                     <span className={styles.detailLabel}>
-                                        مدت زمان نشست
+                                        Session Duration
                                     </span>
                                     <span className={styles.detailValue}>
                                         <span className={styles.sessionTimer}>
                                             {sessionDuration}
                                         </span>
                                         <span className={styles.sessionLabel}>
-                                            ساعت:دقیقه:ثانیه
+                                            Hours:Minutes:Seconds
                                         </span>
                                     </span>
                                 </div>
@@ -321,11 +327,11 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <div className={styles.detailContent}>
                                     <span className={styles.detailLabel}>
-                                        وضعیت امنیت
+                                        Security Status
                                     </span>
                                     <span className={styles.detailValue}>
                                         <span className={styles.securityStatus}>
-                                            حساب محافظت شده
+                                            Account Protected
                                         </span>
                                         <span className={styles.securityIcon}>
                                             🔒

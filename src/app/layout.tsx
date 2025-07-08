@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-    title: 'سیستم احراز هویت',
-    description: 'سیستم احراز هویت با Next.js و TypeScript',
+    title: 'Authentication System',
+    description: 'Authentication system with Next.js and TypeScript',
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang='fa' dir='rtl'>
+        <html lang='en' dir='ltr'>
             <body>{children}</body>
         </html>
     );

@@ -71,13 +71,42 @@ const AuthPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // Fetch random user from API
-            const response = await fetch(
-                'https://randomuser.me/api/?results=1&nat=us'
-            );
+            // Fetch random user from API with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+            let response;
+            try {
+                response = await fetch(
+                    'https://randomuser.me/api/?results=1&nat=us',
+                    { signal: controller.signal }
+                );
+            } catch (fetchError) {
+                clearTimeout(timeoutId);
+                console.error('Network error:', fetchError);
+
+                // Create fallback user data if API is unavailable
+                const fallbackUserData = {
+                    name: 'Demo User',
+                    email: `user.${Date.now()}@example.com`,
+                    avatar: 'https://via.placeholder.com/150/1f2937/ffffff?text=U',
+                    location: 'Tehran, Iran',
+                    phoneNumber: phoneNumber,
+                    loginTime: new Date().toISOString(),
+                };
+
+                localStorage.setItem(
+                    'userData',
+                    JSON.stringify(fallbackUserData)
+                );
+                router.push('/dashboard');
+                return;
+            }
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
-                throw new Error('Error fetching user data');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data: ApiResponse = await response.json();
@@ -99,7 +128,25 @@ const AuthPage: React.FC = () => {
             router.push('/dashboard');
         } catch (error) {
             console.error('Login error:', error);
-            setPhoneError('Login error. Please try again.');
+
+            // Provide more specific error messages
+            if (error instanceof Error) {
+                if (error.name === 'AbortError') {
+                    setPhoneError(
+                        'Request timed out. Please check your connection and try again.'
+                    );
+                } else if (error.message.includes('HTTP error')) {
+                    setPhoneError('Server error. Please try again later.');
+                } else {
+                    setPhoneError(
+                        'Network error. Please check your connection and try again.'
+                    );
+                }
+            } else {
+                setPhoneError(
+                    'An unexpected error occurred. Please try again.'
+                );
+            }
         } finally {
             setIsLoading(false);
         }
@@ -107,6 +154,33 @@ const AuthPage: React.FC = () => {
 
     return (
         <div className={styles.authContainer}>
+            {/* Beautiful Header */}
+            <header className={styles.authHeader}>
+                <div className={styles.headerContent}>
+                    <div className={styles.logoSection}>
+                        <div className={styles.logoIcon}>
+                            <svg
+                                width='32'
+                                height='32'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                xmlns='http://www.w3.org/2000/svg'>
+                                <path
+                                    d='M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z'
+                                    fill='currentColor'
+                                />
+                            </svg>
+                        </div>
+                        <div className={styles.logoText}>
+                            <h1 className={styles.appTitle}>Decamond</h1>
+                            <span className={styles.appSubtitle}>
+                                Secure Authentication
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
             <div className={styles.authCard}>
                 <div className={styles.header}>
                     <h1 className={styles.title}>Login</h1>

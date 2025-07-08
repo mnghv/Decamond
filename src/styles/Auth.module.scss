@@ -1,11 +1,71 @@
 .authContainer {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: hsl(0 0% 100%);
-  padding: 1rem;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  padding-top: 80px; // Add padding to account for fixed header
+
+  // Beautiful Header Styles
+  .authHeader {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    .headerContent {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      .logoSection {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .logoIcon {
+          width: 2.5rem;
+          height: 2.5rem;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          svg {
+            color: white;
+          }
+        }
+
+        .logoText {
+          .appTitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+
+          .appSubtitle {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
 
   .authCard {
     background: hsl(0 0% 100%);
@@ -15,6 +75,7 @@
     padding: 2rem;
     width: 100%;
     max-width: 24rem;
+    margin: 6rem auto;
     animation: slideUp 0.3s ease-out;
 
     .header {
@@ -43,10 +104,12 @@
         .label {
           display: block;
           margin-bottom: 0.5rem;
+          text-align: left;
           font-weight: 500;
           color: hsl(222.2 84% 4.9%);
           font-size: 0.875rem;
           line-height: 1.25rem;
+          
         }
 
         .input {
@@ -99,98 +162,101 @@
           align-items: center;
           gap: 0.25rem;
           line-height: 1.25rem;
+          justify-content: flex-start;
+
         }
       }
 
-              .submitButton {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          background: hsl(222.2 47.4% 11.2%);
+      .submitButton {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: hsl(222.2 47.4% 11.2%);
+        color: hsl(210 40% 98%);
+        border: 1px solid transparent;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+        position: relative;
+        overflow: hidden;
+        line-height: 1.25rem;
+        text-align: center;
+
+        &:hover {
+          background: hsl(222.2 47.4% 9.2%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+          background: hsl(214.3 31.8% 91.4%);
+          color: hsl(215.4 16.3% 46.9%);
+        }
+
+        .loadingSpinner {
+          display: inline-block;
+          width: 1rem;
+          height: 1rem;
+          border: 2px solid transparent;
+          border-top: 2px solid currentColor;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-right: 0.5rem;
+        }
+
+        // Button variants
+        &.destructiveButton {
+          background: hsl(0 84.2% 60.2%);
           color: hsl(210 40% 98%);
-          border: 1px solid transparent;
-          border-radius: 0.5rem;
-          font-size: 0.875rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.15s ease-in-out;
-          position: relative;
-          overflow: hidden;
-          line-height: 1.25rem;
 
           &:hover {
-            background: hsl(222.2 47.4% 9.2%);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
-          }
-
-          &:active {
-            transform: translateY(0);
+            background: hsl(0 84.2% 50.2%);
           }
 
           &:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
-          }
-
-          &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            background: hsl(214.3 31.8% 91.4%);
-            color: hsl(215.4 16.3% 46.9%);
-          }
-
-          .loadingSpinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-          }
-
-          // Button variants
-          &.destructiveButton {
-            background: hsl(0 84.2% 60.2%);
-            color: hsl(210 40% 98%);
-
-            &:hover {
-              background: hsl(0 84.2% 50.2%);
-            }
-
-            &:focus {
-              box-shadow: 0 0 0 2px hsl(0 84.2% 60.2% / 0.1);
-            }
-          }
-
-          &.outlineButton {
-            background: transparent;
-            color: hsl(222.2 47.4% 11.2%);
-            border: 1px solid hsl(214.3 31.8% 91.4%);
-
-            &:hover {
-              background: hsl(214.3 31.8% 91.4% / 0.5);
-              border-color: hsl(222.2 47.4% 11.2%);
-            }
-
-            &:focus {
-              box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
-            }
-          }
-
-          &.smallButton {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.75rem;
-          }
-
-          &.largeButton {
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
+            box-shadow: 0 0 0 2px hsl(0 84.2% 60.2% / 0.1);
           }
         }
+
+        &.outlineButton {
+          background: transparent;
+          color: hsl(222.2 47.4% 11.2%);
+          border: 1px solid hsl(214.3 31.8% 91.4%);
+
+          &:hover {
+            background: hsl(214.3 31.8% 91.4% / 0.5);
+            border-color: hsl(222.2 47.4% 11.2%);
+          }
+
+          &:focus {
+            box-shadow: 0 0 0 2px hsl(222.2 47.4% 11.2% / 0.1);
+          }
+        }
+
+        &.smallButton {
+          padding: 0.5rem 0.75rem;
+          font-size: 0.75rem;
+        }
+
+        &.largeButton {
+          padding: 1rem 1.5rem;
+          font-size: 1rem;
+        }
+      }
     }
   }
 }
@@ -212,11 +278,30 @@
 }
 
 // Responsive design
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .authContainer {
-    padding: 1rem;
+    padding-top: 70px; // Smaller padding for mobile
+    
+    .authHeader {
+      padding: 1rem;
+
+      .headerContent {
+        .logoSection {
+          .logoText {
+            .appTitle {
+              font-size: 1.25rem;
+            }
+
+            .appSubtitle {
+              font-size: 0.625rem;
+            }
+          }
+        }
+      }
+    }
 
     .authCard {
+      margin: 6rem auto;
       padding: 1.5rem;
 
       .header {
